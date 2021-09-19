@@ -1,0 +1,383 @@
+//simple Bus Reservation System in C++
+#include<iostream>
+#include<stdio.h>
+#include<conio.h>
+#include<string.h>
+#include<stdlib.h>
+using namespace std;
+
+//p variable to keep the track of number of buses available for the moment
+//initially p=0
+int p=0;
+//all details of the buses are stored in class
+class a
+{
+	char busn[10], driver[10],arrival[10],depart[10],from[10],to[10],seat[8][4][10];
+	//seat[8][4] means8rows and 4 cloumns: 8*4=32 seats
+	//seat[8][4][10] means it can store the name of the passenger also
+	
+	public:
+		void addnewbus();//includes the details of a bus
+		void allotmentofseat();//allots the seat for a passenger
+		void empty();//initialize all bus seats as vacant
+        void showavailablebusseats();      //shows avialble bus seats from a bus
+		void showavailablebuses();     //shows all avialable buses
+        void showreservedbusseats(int i); //to get the all reserved bus seats from a bus
+
+}
+bus[25]; // Bus is an  array of class with max size of 25 buses.
+
+
+void a::addnewbus()
+{
+
+  cout<<"Enter bus no: ";
+
+  cin>>bus[p].busn;
+
+  cout<<"\nEnter Driver's name: ";
+
+  cin>>bus[p].driver;
+
+  cout<<"\nArrival time : ";
+
+  cin>>bus[p].arrival;
+
+  cout<<"\nDeparture: ";
+
+  cin>>bus[p].depart;
+
+  cout<<"\nFrom:";
+
+  cin>>bus[p].from;
+
+  cout<<"\nTo:";
+
+  cin>>bus[p].to;
+
+  bus[p].empty(); // Fill all the seats with 'empty'
+
+  p++; //Number of buses(index of array bus) increase
+
+}
+
+//Used to allocate seat in bus
+void a::allotmentofseat()
+
+{
+
+  int seat;  // Enter seat number between 1 to 32
+
+  char number[5]; //Bus number in which you want to reserve seat
+
+  top:
+
+  cout<<"Bus no: ";
+
+  cin>>number;
+
+  int n;
+
+  for(n=0;n<=p;n++)
+
+  {
+
+    if(strcmp(bus[n].busn, number)==0) //Check if bus number exist or not, if exist n will be the index of array bus
+
+    break;
+
+  }
+
+  while(n<=p)
+
+  {
+
+    cout<<"\nSeat Number: ";
+
+    cin>>seat;
+
+    if(seat>32) //Can't allocate as there are only 32 seats
+    {
+
+      cout<<"\nThere are only 32 seats available in this bus.";
+
+    }
+
+    else
+
+    {
+
+    if (strcmp(bus[n].seat[seat/4][(seat%4)-1], "Empty")==0) // used to break the seat number in row-column basis, If empty then allocate passenger
+
+      {
+
+        cout<<"Enter passanger's name: ";
+
+        cin>>bus[n].seat[seat/4][(seat%4)-1];
+
+        break;
+
+      }
+
+    else
+
+      cout<<"The seat number is already reserved.\n";
+
+      }
+
+      }
+
+    if(n>p)
+
+    {
+
+      cout<<"Enter correct bus no.\n";
+
+      goto top;
+
+    }
+
+  }
+
+//Makes all the seats empty
+void a::empty()
+
+{
+
+  for(int i=0; i<8;i++)
+
+  {
+
+    for(int j=0;j<4;j++)
+
+    {
+
+      strcpy(bus[p].seat[i][j], "Empty");
+
+    }
+
+  }
+
+}
+
+
+// Allows to check vacent seats in a bus
+void a::showavailablebusseats()
+
+{
+
+  int n;
+
+  char number[5];
+
+  cout<<"Enter bus no: ";
+
+  cin>>number;
+
+//Finds the bus number matched with input bus number
+  for(n=0;n<=p;n++)
+
+  {
+
+    if(strcmp(bus[n].busn, number)==0) // if matched the n will be the index of bus
+
+    break;
+
+  }
+
+while(n<=p)
+
+{
+
+  cout<<"\nBus no:"<<bus[n].busn
+
+  <<"\nDriver:"<<bus[n].driver<<"\nArrival time:"
+
+  <<bus[n].arrival<<"\nDeparture time:"<<bus[n].depart
+
+  <<"\nFrom:"<<bus[n].from<<"\nTo:"<<
+
+  bus[n].to<<"\n";
+
+
+  bus[0].showreservedbusseats(n); //Checks for reserved seats in the current bus( nth bus)
+
+  int a=1;
+
+  for (int i=0; i<8; i++)
+
+  {
+
+    for(int j=0;j<4;j++)
+
+    {
+
+      a++;
+
+      if(strcmp(bus[n].seat[i][j],"Empty")!=0)
+
+      cout<<"\nThe seat no "<<(a-1)<<" is reserved for "<<bus[n].seat[i][j]<<".";
+
+    }
+
+  }
+
+  break;
+
+  }
+
+  if(n>p)
+
+    cout<<"Enter correct bus no: ";
+
+}
+
+//Helps create a table output with seats empty and reserved seats with passenger name
+void a::showreservedbusseats(int l)
+{
+
+  int s=0,h=0;
+
+  for (int i =0; i<8;i++)
+
+  {
+
+    cout<<"\n";
+
+    for (int j = 0;j<4; j++)
+
+    {
+
+      s++;
+
+      if(strcmp(bus[l].seat[i][j], "Empty")==0)
+
+        {
+
+          cout.width(5);
+
+          cout.fill(' ');
+
+          cout<<s<<".";
+
+          cout.width(10);
+
+          cout.fill(' ');
+
+          cout<<bus[l].seat[i][j];
+
+          h++;
+
+        }
+
+        else
+
+        {
+
+        cout.width(5);
+
+        cout.fill(' ');
+
+        cout<<s<<".";
+
+        cout.width(10);
+
+        cout.fill(' ');
+
+        cout<<bus[l].seat[i][j];
+
+        }
+
+      }
+
+    }
+
+  cout<<"\n\nThere are "<<h<<" seats empty in Bus No: "<<bus[l].busn;
+
+  }
+
+//Print all the buses added in the system
+void a::showavailablebuses()
+
+{
+
+  for(int n=0;n<p;n++)
+
+  {
+
+
+
+    cout<<"\nBus no:"<<bus[n].busn<<"\nDriver:"<<bus[n].driver
+
+    <<"\nArrival time:"<<bus[n].arrival<<"\nDeparture Time:"
+
+    <<bus[n].depart<<"\nFrom:"<<bus[n].from<<"\nTo:"
+
+    <<bus[n].to<<"\n";
+
+
+  }
+
+}
+
+//Main function
+int main()
+
+{
+
+  int choice;
+  cout<<"\t\t\t\t BUS RESERVATION SYSTEM "<<endl<<endl;
+  while(1)
+  {
+ 
+
+    //system("cls");
+  cout<<endl;
+  cout<<"\n\n";
+
+  cout<<"\t\t\t1.Add new Bus Details:\n\t\t\t"
+
+  <<"2.Reserve your seats:\n\t\t\t"
+
+  <<"3.Show the available seats in a bus:\n\t\t\t"
+
+  <<"4.Buses Available Now: \n\t\t\t"
+
+  <<"5.Exit";
+  cout<<endl;
+  cout<<"\n\t\t\tEnter your choice:-> ";
+
+  cin>>choice;
+
+  switch(choice)
+
+  {
+
+    case 1:  bus[p].addnewbus();
+
+      break;
+
+    case 2:  bus[p].allotmentofseat();
+
+      break;
+
+    case 3:  bus[0].showavailablebusseats();
+
+      break;
+
+    case 4:  bus[0].showavailablebuses();
+
+      break;
+
+    case 5:  {
+      cout<<"Successfully Logged out from the Application. Visit Again!"<<endl<<"<Thanks You :)>"<<endl;
+      exit(0);
+    };
+
+  }
+
+}
+
+return 0;
+
+}
